@@ -1,0 +1,11 @@
+.cell {
+    background-color: #808080;
+    /* border: solid #000 0.1px; */
+    height: 3vh;
+    width: 3vh;
+    margin: 1px;
+}
+
+.line {
+    line-height: 0px;
+}
