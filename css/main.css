@@ -3,9 +3,13 @@
     /* border: solid #000 0.1px; */
     height: 3vh;
     width: 3vh;
-    margin: 1px;
+    margin: 0.5px;
 }
 
 .line {
     line-height: 0px;
+}
+
+.opened {
+    background-color: #FFF;
 }

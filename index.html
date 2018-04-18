@@ -13,8 +13,9 @@
     <div id="app">
         <div class="line" v-for="(line,row) in bomField">
             <span v-for=" (cell,col) in line ">
-                <button class="cell" v-on:click="fieldClickAction(row,col)"></button>
-                {{cell}}
+                <button class="cell" @click.left="fieldLeftClickAction(row,col)" @click.right.prevent="fieldRightClickAction(row,col)">
+                    {{numberField[row][col]}}
+                </button>
             </span>
         </div>
 
