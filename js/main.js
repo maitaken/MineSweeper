@@ -1,32 +1,71 @@
 var app = new Vue({
     el: '#app',
     data: {
-        bomField: [],
         numberField: [],
         statusField: [],
-        N: 15
+        N: 10,
+        LEVEL: 0.2
     },
     methods: {
         fieldLeftClickAction: function (row, col) {
-            if (this.bomField[row][col])
+            if (this.numberField[row][col] == "B") {
                 alert("Bom")
+                return
+            }
+            this.openCell(row, col)
+            console.log(this.statusField)
+        },
+        openCell: function (row, col) {
+            queue = []
+            queue.push([row, col])
 
+            while (queue.length) {
+                console.log(this.statusField)
+                state = queue.shift(0)
+                console.log(state)
+                console.log(queue)
+
+                row = state[0]
+                col = state[1]
+
+                this.statusField[row][col] = 1
+
+                if (this.numberField[row][col] == 0) {
+                    if (row > 0 && this.statusField[row - 1][col] == 0) {
+                        queue.push([row - 1, col])
+                    }
+                    if (row < this.N - 1 && this.statusField[row + 1][col] == 0) {
+                        queue.push([row + 1, col])
+                    }
+                    if (col > 0 && this.statusField[row][col - 1] == 0) {
+                        queue.push([row, col - 1])
+                    }
+                    if (col < this.N - 1 && this.statusField[row][col + 1] == 0) {
+                        queue.push([row, col + 1])
+                    }
+                }
+
+            }
         },
         fieldRightClickAction: function (row, col) {
             alert(row + " " + col)
         },
-        createFieldNumber: function () {
-
-            // bomFieldをfalseで囲った配列tempFieldを作成する
+        createField: function () {
             falseLine = new Array(this.N + 2).fill(false)
+
             tempField = [falseLine]
             for (i = 0; i < this.N; i++) {
-                line = []
-                line.push(false)
-                line = line.concat(this.bomField[i])
+                var line = [false]
+                for (j = 0; j < this.N; j++) {
+                    if (Math.random() < this.LEVEL)
+                        line.push(true)
+                    else
+                        line.push(false)
+                }
                 line.push(false)
                 tempField.push(line)
             }
+
             tempField.push(falseLine)
 
             // tempFieldから数値を算出
@@ -51,28 +90,17 @@ var app = new Vue({
                 this.numberField.push(line)
             }
         },
-        createBomField: function () {
-            for (i = 0; i < this.N; i++) {
-                var line = []
-                for (j = 0; j < this.N; j++) {
-                    if (Math.random() < 0.1)
-                        line.push(true)
-                    else
-                        line.push(false)
-                }
-                this.bomField.push(line)
-            }
-        },
         createStatusField: function () {
             this.statusField = new Array(this.N)
             for (i = 0; i < this.N; i++) {
                 this.statusField[i] = new Array(this.N).fill(0);
             }
         }
+
     },
     created: function () {
-        this.createBomField()
-        this.createFieldNumber()
+
+        this.createField()
         this.createStatusField()
     }
 })
