@@ -11,10 +11,14 @@
 
 <body>
     <div id="app">
-        <div class="line" v-for="(line,row) in numberField">
+        <div class="line" v-for="(line,row) in field">
             <span v-for=" (cell,col) in line ">
-                <button class="cell" @click.left="fieldLeftClickAction(row,col)" @click.right.prevent="fieldRightClickAction(row,col)">
-                    {{numberField[row][col]}}
+                <button class="cell" 
+                        @click.left="fieldLeftClickAction(row,col)" 
+                        @click.right.prevent="fieldRightClickAction(row,col)"
+                        :class={opened:cell.open,flag:cell.flag}
+                        >
+                        {{cell.state}}
                 </button>
             </span>
         </div>

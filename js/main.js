@@ -1,56 +1,77 @@
 var app = new Vue({
     el: '#app',
     data: {
-        numberField: [],
-        statusField: [],
+        field: [],
         N: 10,
         LEVEL: 0.2
     },
     methods: {
         fieldLeftClickAction: function (row, col) {
-            if (this.numberField[row][col] == "B") {
+            if (this.field[row][col].state == "B") {
                 alert("Bom")
                 return
             }
             this.openCell(row, col)
-            console.log(this.statusField)
         },
         openCell: function (row, col) {
             queue = []
             queue.push([row, col])
 
+            // ８近傍の相対距離
+            neighbor =[[1,1],[1,0],[1,-1],[0,1],[0,-1],[-1,1],[-1,0],[-1,-1]]
+
             while (queue.length) {
-                console.log(this.statusField)
-                state = queue.shift(0)
-                console.log(state)
                 console.log(queue)
+                state = queue.shift()
 
                 row = state[0]
                 col = state[1]
 
-                this.statusField[row][col] = 1
+                this.field[row][col].open = true
 
-                if (this.numberField[row][col] == 0) {
-                    if (row > 0 && this.statusField[row - 1][col] == 0) {
-                        queue.push([row - 1, col])
-                    }
-                    if (row < this.N - 1 && this.statusField[row + 1][col] == 0) {
-                        queue.push([row + 1, col])
-                    }
-                    if (col > 0 && this.statusField[row][col - 1] == 0) {
-                        queue.push([row, col - 1])
-                    }
-                    if (col < this.N - 1 && this.statusField[row][col + 1] == 0) {
-                        queue.push([row, col + 1])
-                    }
+                // Fieldの数値が0でなければ終了
+                if(this.field[row][col].state!=0){
+                    continue
                 }
+                // Fieldの数値が0であれば、幅優先でcellを開けていく
+
+                for(diff of neighbor){
+                    nextRow = row+diff[0]
+                    nextCol = col+diff[1]
+
+                    
+
+                    if(nextRow<0||nextCol<0||nextRow>this.N-1||nextCol>this.N-1)
+                        continue
+
+                    // 
+                    if(this.field[nextRow][nextCol].open == 0)
+                        queue.push([nextRow,nextCol])
+
+                    
+                }
+
+                // if (this.field[row][col].state == 0) {
+                //     if (row > 0 && this.field[row - 1][col].open == 0) {
+                //         queue.push([row - 1, col])
+                //     }
+                //     if (row < this.N - 1 && this.field[row + 1][col].open == 0) {
+                //         queue.push([row + 1, col])
+                //     }
+                //     if (col > 0 && this.field[row][col - 1].open == 0) {
+                //         queue.push([row, col - 1])
+                //     }
+                //     if (col < this.N - 1 && this.field[row][col + 1].open == 0) {
+                //         queue.push([row, col + 1])
+                //     }
+                // }
 
             }
         },
         fieldRightClickAction: function (row, col) {
-            alert(row + " " + col)
+            this.field[row][col].flag = !this.field[row][col].flag 
         },
-        createField: function () {
+        resetField: function () {
             falseLine = new Array(this.N + 2).fill(false)
 
             tempField = [falseLine]
@@ -74,9 +95,9 @@ var app = new Vue({
                 line = []
                 for (j = 1; j < this.N + 1; j++) {
                     if (tempField[i][j])
-                        line.push("B")
+                        state = "B"
                     else {
-                        cell = tempField[i + 1][j + 1] +
+                        state = tempField[i + 1][j + 1] +
                             tempField[i + 1][j] +
                             tempField[i + 1][j - 1] +
                             tempField[i][j + 1] +
@@ -84,11 +105,16 @@ var app = new Vue({
                             tempField[i - 1][j + 1] +
                             tempField[i - 1][j] +
                             tempField[i - 1][j - 1]
-                        line.push(cell)
                     }
+                    line.push({
+                        "state": state,
+                        "flag": false,
+                        "open": false
+                    })
                 }
-                this.numberField.push(line)
+                this.field.push(line)
             }
+
         },
         createStatusField: function () {
             this.statusField = new Array(this.N)
@@ -99,8 +125,7 @@ var app = new Vue({
 
     },
     created: function () {
-
-        this.createField()
+        this.resetField()
         this.createStatusField()
     }
 })

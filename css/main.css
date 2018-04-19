@@ -1,9 +1,13 @@
 .cell {
     background-color: rgb(180, 180, 180);
-    /* border: solid #000 0.1px; */
+    border: solid #000 0.1px;
     height: 3vh;
     width: 3vh;
     margin: 0.5px;
+}
+
+#app{
+    border: solid rgb(255, 255, 255) 0.1px;
 }
 
 .line {
@@ -12,4 +16,8 @@
 
 .opened {
     background-color: #FFF;
+}
+
+.flag{
+    background-color: #CCC;
 }
