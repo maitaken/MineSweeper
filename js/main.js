@@ -2,8 +2,8 @@ var app = new Vue({
     el: '#app',
     data: {
         field: [],
-        N: 10,
-        LEVEL: 0.2
+        N: 40,
+        LEVEL: 0.01
     },
     methods: {
         fieldLeftClickAction: function (row, col) {
@@ -21,14 +21,18 @@ var app = new Vue({
             neighbor =[[1,1],[1,0],[1,-1],[0,1],[0,-1],[-1,1],[-1,0],[-1,-1]]
 
             while (queue.length) {
-                console.log(queue)
                 state = queue.shift()
 
                 row = state[0]
                 col = state[1]
 
-                this.field[row][col].open = true
-
+                if(this.field[row][col].open){
+                    continue
+                }
+                else{
+                    this.field[row][col].open = true
+                }
+                
                 // Fieldの数値が0でなければ終了
                 if(this.field[row][col].state!=0){
                     continue
@@ -44,27 +48,11 @@ var app = new Vue({
                     if(nextRow<0||nextCol<0||nextRow>this.N-1||nextCol>this.N-1)
                         continue
 
-                    // 
                     if(this.field[nextRow][nextCol].open == 0)
                         queue.push([nextRow,nextCol])
 
                     
                 }
-
-                // if (this.field[row][col].state == 0) {
-                //     if (row > 0 && this.field[row - 1][col].open == 0) {
-                //         queue.push([row - 1, col])
-                //     }
-                //     if (row < this.N - 1 && this.field[row + 1][col].open == 0) {
-                //         queue.push([row + 1, col])
-                //     }
-                //     if (col > 0 && this.field[row][col - 1].open == 0) {
-                //         queue.push([row, col - 1])
-                //     }
-                //     if (col < this.N - 1 && this.field[row][col + 1].open == 0) {
-                //         queue.push([row, col + 1])
-                //     }
-                // }
 
             }
         },
