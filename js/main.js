@@ -3,7 +3,7 @@ var app = new Vue({
     data: {
         field: [],
         N: 10,
-        LEVEL: 0.1
+        LEVEL: 0.15
     },
     methods: {
         fieldLeftClickAction: function (row, col) {
@@ -113,6 +113,21 @@ var app = new Vue({
             for (i = 0; i < this.N; i++) {
                 this.statusField[i] = new Array(this.N).fill(0);
             }
+        },
+        checkClear:function(){
+            for(y=0;i<this.N;i++){
+                for(x=0;j<this.N;j++){
+                    if(this.field[x][y])
+                        if(this.field[x][y].state=="B")
+                            continue
+                        else{
+                            alert("miss")
+                            return
+                        }
+                }
+            }
+
+            alert("Finish")
         }
 
     },
