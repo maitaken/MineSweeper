@@ -2,16 +2,23 @@ var app = new Vue({
     el: '#app',
     data: {
         field: [],
-        N: 40,
-        LEVEL: 0.01
+        N: 10,
+        LEVEL: 0.1
     },
     methods: {
         fieldLeftClickAction: function (row, col) {
-            if (this.field[row][col].state == "B") {
-                alert("Bom")
-                return
+            // flagが立っていなかったらオープン
+            if(!this.field[row][col].flag){
+                // 爆弾だったらアラート
+                if (this.field[row][col].state == "B") {
+                    alert("Bom")
+                    return
+                }
+                this.openCell(row, col)
             }
-            this.openCell(row, col)
+        },
+        fieldRightClickAction: function (row, col) {
+            this.field[row][col].flag = !this.field[row][col].flag 
         },
         openCell: function (row, col) {
             queue = []
@@ -29,10 +36,12 @@ var app = new Vue({
                 if(this.field[row][col].open){
                     continue
                 }
-                else{
+                else{  
+                    // flagを決してcellをオープン
+                    this.field[row][col].flag = false
                     this.field[row][col].open = true
                 }
-                
+
                 // Fieldの数値が0でなければ終了
                 if(this.field[row][col].state!=0){
                     continue
@@ -42,8 +51,6 @@ var app = new Vue({
                 for(diff of neighbor){
                     nextRow = row+diff[0]
                     nextCol = col+diff[1]
-
-                    
 
                     if(nextRow<0||nextCol<0||nextRow>this.N-1||nextCol>this.N-1)
                         continue
@@ -55,9 +62,6 @@ var app = new Vue({
                 }
 
             }
-        },
-        fieldRightClickAction: function (row, col) {
-            this.field[row][col].flag = !this.field[row][col].flag 
         },
         resetField: function () {
             falseLine = new Array(this.N + 2).fill(false)
