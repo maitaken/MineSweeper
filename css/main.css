@@ -3,8 +3,8 @@
 .cell {
     background-color: rgb(180, 180, 180);
     float: left;
-    height: 2vh;
-    width: 2vh;
+    height: 25px;
+    width: 25px;
     border:1px solid;
     border-color:rgb(210, 210, 210) rgb(80, 80, 80) rgb(80, 80, 80) rgb(210, 210, 210);
 }
@@ -18,7 +18,7 @@
 }
 
 .line {
-    height: 2vh;
+    height: 25px;
     float: left;
 }
 
