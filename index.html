@@ -16,9 +16,13 @@
                 <div class="cell " 
                         @click.left="fieldLeftClickAction(row,col)" 
                         @click.right.prevent="fieldRightClickAction(row,col)"
-                        :class={opened:cell.open,flag:cell.flag}
+                        :class={opened:cell.open,flag:cell.flag,bom:cell.open&&cell.bom}
                         >
-                        {{cell.open?cell.state:""}}
+
+                    <div v-show="cell.open">
+                        {{cell.bom?"":cell.state}}     
+                    </div>
+               
                 </div>
             </div>
         </div>

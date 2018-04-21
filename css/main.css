@@ -31,3 +31,9 @@
     background-image: url("./../image/flag.png");
     background-size: contain;
 }
+
+.bom{
+    background-color: #FFF;
+    background-image: url("./../image/bom.png");
+    background-size: contain;
+}

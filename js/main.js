@@ -10,11 +10,11 @@ var app = new Vue({
             // flagが立っていなかったらオープン
             if(!this.field[row][col].flag){
                 // 爆弾だったらアラート
+                this.openCell(row, col)
                 if (this.field[row][col].state == "B") {
                     alert("Bom")
                     return
                 }
-                this.openCell(row, col)
             }
         },
         fieldRightClickAction: function (row, col) {
@@ -103,7 +103,8 @@ var app = new Vue({
                     line.push({
                         "state": state,
                         "flag": false,
-                        "open": false
+                        "open": false,
+                        "bom":tempField[i][j]
                     })
                 }
                 this.field.push(line)
