@@ -3,7 +3,7 @@ var app = new Vue({
     data: {
         field: [],
         N: 10,
-        LEVEL: 0.15
+        LEVEL: 0.1
     },
     methods: {
         fieldLeftClickAction: function (row, col) {
@@ -11,14 +11,15 @@ var app = new Vue({
             if(!this.field[row][col].flag){
                 // 爆弾だったらアラート
                 this.openCell(row, col)
-                if (this.field[row][col].state == "B") {
+                if (this.field[row][col].bom) {
                     alert("Bom")
                     return
                 }
             }
         },
         fieldRightClickAction: function (row, col) {
-            this.field[row][col].flag = !this.field[row][col].flag 
+            if(!this.field[row][col].open)
+                this.field[row][col].flag = !this.field[row][col].flag 
         },
         openCell: function (row, col) {
             queue = []
@@ -118,18 +119,17 @@ var app = new Vue({
             }
         },
         checkClear:function(){
-            for(y=0;i<this.N;i++){
-                for(x=0;j<this.N;j++){
-                    if(this.field[x][y])
-                        if(this.field[x][y].state=="B")
-                            continue
-                        else{
-                            alert("miss")
-                            return
-                        }
+            for(row of this.field){
+                for(cell of row){
+                    if(cell.bom === cell.flag){
+                        continue
+                    }
+                    else{
+                        alert("miss")
+                        return
+                    }
                 }
             }
-
             alert("Finish")
         },
         reset:function(){
