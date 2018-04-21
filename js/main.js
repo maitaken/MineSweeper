@@ -2,22 +2,33 @@ var app = new Vue({
     el: '#app',
     data: {
         field: [],
-        N: 10,
-        LEVEL: 0.1
+        isGameover:false,
+        N: 20,
+        LEVEL: 0.10
     },
     methods: {
         fieldLeftClickAction: function (row, col) {
+
+            if(this.isGameover){
+                return
+            }
+
             // flagが立っていなかったらオープン
             if(!this.field[row][col].flag){
                 // 爆弾だったらアラート
                 this.openCell(row, col)
                 if (this.field[row][col].bom) {
-                    alert("Bom")
+                    this.gameover()
                     return
                 }
             }
         },
         fieldRightClickAction: function (row, col) {
+
+            if(this.isGameover){
+                return
+            }
+
             if(!this.field[row][col].open)
                 this.field[row][col].flag = !this.field[row][col].flag 
         },
@@ -66,6 +77,7 @@ var app = new Vue({
         },
         resetField: function () {
             this.field = []
+            this.isGameover = false
 
             var falseLine = new Array(this.N + 2).fill(false)
 
@@ -130,13 +142,23 @@ var app = new Vue({
                     }
                 }
             }
-            alert("Finish")
+            alert("Success")
         },
         reset:function(){
             this.resetField()
             this.createStatusField()
+        },
+        gameover:function(){
+            alert("Bom")
+            this.isGameover = true
+            for(row of this.field){
+                for(cell of row){
+                    if(cell.bom){
+                        cell.open = true
+                    }
+                }
+            } 
         }
-
     },
     created: function () {
         this.reset()

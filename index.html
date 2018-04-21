@@ -20,7 +20,7 @@
                         >
 
                     <div v-show="cell.open">
-                        {{cell.bom?"":cell.state}}     
+                        {{cell.bom || cell.state==0 ?"":cell.state}}     
                     </div>
                
                 </div>
