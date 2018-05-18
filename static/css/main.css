@@ -1,0 +1,39 @@
+
+
+.cell {
+    background-color: rgb(180, 180, 180);
+    float: left;
+    height: 20px;
+    width: 20px;
+    border:2px solid;
+    border-color:rgb(210, 210, 210) rgb(80, 80, 80) rgb(80, 80, 80) rgb(210, 210, 210);
+}
+
+.cell:hover{
+    background-color: rgb(200, 200, 200);
+}
+
+.cell:active{
+    background-color: rgb(82, 73, 73);
+}
+
+.line {
+    height: 20px;
+    float: left;
+}
+
+.opened {
+    background-color: #FFF;
+}
+
+.flag{
+    background-color: #FFF;
+    background-image: url("./../image/flag.png");
+    background-size: contain;
+}
+
+.bom{
+    background-color: #FFF;
+    background-image: url("./../image/bom.png");
+    background-size: contain;
+}
