@@ -1,0 +1,23 @@
+{
+  "name": "minesweeper",
+  "version": "1.0.0",
+  "description": "サーバの追加",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IkedaTakeshi/MineSweeper.git"
+  },
+  "author": "IkedaTakeshi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/IkedaTakeshi/MineSweeper/issues"
+  },
+  "homepage": "https://github.com/IkedaTakeshi/MineSweeper#readme",
+  "dependencies": {
+    "express": "^4.16.3"
+  }
+}
