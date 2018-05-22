@@ -3,8 +3,8 @@ var app = new Vue({
     data: {
         field: [],
         isGameover:false,
-        N: 20,
-        LEVEL: 0.10
+        N: 15,
+        LEVEL: 0.15
     },
     methods: {
         fieldLeftClickAction: function (row, col) {

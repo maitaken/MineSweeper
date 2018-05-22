@@ -22,6 +22,10 @@
     float: left;
 }
 
+button{
+    float: left;
+}
+
 .opened {
     background-color: #FFF;
 }
