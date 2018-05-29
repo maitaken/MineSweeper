@@ -13,7 +13,7 @@
     <div id="app">
         <div class="line" v-for="(line,row) in field">
             <div class="cells" v-for=" (cell,col) in line ">
-                <div class="cell " @click.left="fieldLeftClickAction(row,col)" @click.right.prevent="fieldRightClickAction(row,col)" :class={opened:cell.open,flag:cell.flag,bom:cell.open&&cell.bom}>
+                <div class="cell " @click.left="fieldLeftClickAction(row,col)" @click.right.prevent="fieldRightClickAction(row,col)" :class="{opened:cell.open,flag:cell.flag,bom:cell.open&&cell.bom}">
 
                     <div v-show="cell.open">
                         {{cell.bom || cell.state==0 ?"":cell.state}}
