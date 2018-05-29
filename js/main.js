@@ -2,8 +2,8 @@ var app = new Vue({
     el: '#app',
     data: {
         field: [],
-        N: 10,
-        LEVEL: 0.15
+        N: 40,
+        LEVEL: 0.1
     },
     methods: {
         fieldLeftClickAction: function (row, col) {
@@ -64,9 +64,11 @@ var app = new Vue({
             }
         },
         resetField: function () {
-            falseLine = new Array(this.N + 2).fill(false)
+            this.field = []
 
-            tempField = [falseLine]
+            var falseLine = new Array(this.N + 2).fill(false)
+
+            var tempField = [falseLine]
             for (i = 0; i < this.N; i++) {
                 var line = [false]
                 for (j = 0; j < this.N; j++) {
@@ -117,22 +119,28 @@ var app = new Vue({
         checkClear:function(){
             for(y=0;i<this.N;i++){
                 for(x=0;j<this.N;j++){
-                    if(this.field[x][y])
-                        if(this.field[x][y].state=="B")
-                            continue
-                        else{
-                            alert("miss")
-                            return
-                        }
+                    if((this.field[y][x] == "B") === this.field[y][x].flag){
+                        continue
+                    }
+                    else{
+                        alert("No")
+                        return
+                    }
                 }
             }
 
             alert("Finish")
+        },
+        reset:function(){
+            this.resetField()
+            this.createStatusField()
         }
 
     },
     created: function () {
-        this.resetField()
-        this.createStatusField()
+        this.reset()
     }
 })
+
+
+
