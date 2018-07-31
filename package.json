@@ -1,0 +1,28 @@
+{
+  "name": "minesweeper",
+  "version": "1.0.0",
+  "description": "サーバの追加",
+  "main": "main.js",
+  "dependencies": {
+    "express": "^4.16.3"
+  },
+  "devDependencies": {
+    "electron-packager": "^12.1.0",
+    "electron-prebuilt": "^1.4.13"
+  },
+  "scripts": {
+    "start": "electron main.js",
+    "package": "electron-packager . getting-started --platform=linux,darwin --arch=x64 --overwrite",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IkedaTakeshi/MineSweeper.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/IkedaTakeshi/MineSweeper/issues"
+  },
+  "homepage": "https://github.com/IkedaTakeshi/MineSweeper#readme"
+}

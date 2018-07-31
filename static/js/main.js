@@ -1,10 +1,18 @@
+// レンダラプロセス（送信側）
+const { ipcRenderer } = require('electron') // ipc通信を読み込む
+
+ipcRenderer.on('change-level', function (event, args) {
+    app.N = args
+    app.reset()
+})
+
 var app = new Vue({
     el: '#app',
     data: {
         field: [],
         isGameover: false,
-        N: 15,
-        LEVEL: 0.10
+        N: 8,
+        LEVEL: 0.12
     },
     methods: {
         fieldLeftClickAction: function (row, col) {
@@ -15,20 +23,18 @@ var app = new Vue({
 
             // flagが立っていなかったらオープン
             if (!this.field[row][col].flag) {
-
-                // bomだったらGameover
+                // 爆弾だったらアラート
+                this.openCell(row, col)
                 if (this.field[row][col].bom) {
                     this.gameover()
                     return
                 }
-
-                // 再帰的にcellをopen
-                this.openCell(row, col)
-
             }
 
-            if (this.checkClear()) {
-                this.allOpen()
+            console.log(this.allOpen())
+
+            if (this.allOpen()) {
+
                 if (confirm("You Win!\nDo you play once more? "))
                     this.reset()
             }
@@ -50,13 +56,16 @@ var app = new Vue({
             neighbor = [[1, 1], [1, 0], [1, -1], [0, 1], [0, -1], [-1, 1], [-1, 0], [-1, -1]]
 
             while (queue.length) {
-                [row, col] = queue.shift()
+                state = queue.shift()
+
+                row = state[0]
+                col = state[1]
 
                 if (this.field[row][col].open) {
                     continue
                 }
                 else {
-                    // flagをけしてcellをオープン
+                    // flagを決してcellをオープン
                     this.field[row][col].flag = false
                     this.field[row][col].open = true
                 }
@@ -68,13 +77,15 @@ var app = new Vue({
                 // Fieldの数値が0であれば、幅優先でcellを開けていく
 
                 for (diff of neighbor) {
-                    [nextRow, nextCol] = [row + diff[0], col + diff[1]]
+                    nextRow = row + diff[0]
+                    nextCol = col + diff[1]
 
                     if (nextRow < 0 || nextCol < 0 || nextRow > this.N - 1 || nextCol > this.N - 1)
                         continue
 
                     if (this.field[nextRow][nextCol].open == 0)
                         queue.push([nextRow, nextCol])
+
 
                 }
 
@@ -135,10 +146,10 @@ var app = new Vue({
                 this.statusField[i] = new Array(this.N).fill(0);
             }
         },
-        checkClear: function () {
+        allOpen: function () {
             for (row of this.field) {
                 for (cell of row) {
-                    if (cell.bom || cell.open) {
+                    if (cell.bom === cell.flag) {
                         continue
                     }
                     else {
@@ -158,18 +169,6 @@ var app = new Vue({
             for (row of this.field) {
                 for (cell of row) {
                     if (cell.bom) {
-                        cell.open = true
-                    }
-                }
-            }
-        },
-        allOpen: function () {
-            for (row of this.field) {
-                for (cell of row) {
-                    if (cell.bom) {
-                        cell.flag = true
-                    }
-                    else {
                         cell.open = true
                     }
                 }
