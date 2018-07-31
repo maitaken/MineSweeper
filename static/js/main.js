@@ -1,10 +1,12 @@
-// レンダラプロセス（送信側）
-const { ipcRenderer } = require('electron') // ipc通信を読み込む
+// // レンダラプロセス（送信側）
+// const { ipcRenderer } = require('electron') // ipc通信を読み込む
 
-ipcRenderer.on('change-level', function (event, args) {
-    app.N = args
-    app.reset()
-})
+// ipcRenderer.on('change-level', function (event, args) {
+//     app.N = args
+//     app.reset()
+// })
+
+const neighbor = [[1, 1], [1, 0], [1, -1], [0, 1], [0, -1], [-1, 1], [-1, 0], [-1, -1]]
 
 var app = new Vue({
     el: '#app',
@@ -12,35 +14,36 @@ var app = new Vue({
         field: [],
         isGameover: false,
         N: 8,
-        LEVEL: 0.12
+        LEVEL: 0.12,
+        bomCount: 0
     },
     methods: {
-        fieldLeftClickAction: function (row, col) {
+        leftClickAction: function (row, col) {
 
-            if (this.isGameover) {
+            // GameOverの場合とフラグが立っている場合は
+            //左クリックを無効にする
+            if (this.isGameover || this.field[row][col].flag) {
                 return
             }
 
-            // flagが立っていなかったらオープン
-            if (!this.field[row][col].flag) {
-                // 爆弾だったらアラート
-                this.openCell(row, col)
-                if (this.field[row][col].bom) {
-                    this.gameover()
-                    return
-                }
+            //
+            if (this.field[row][col].bom) {
+                this.gameover()
+                return
             }
 
-            console.log(this.allOpen())
+            // 爆弾だったらアラート
+            this.openCell(row, col)
 
-            if (this.allOpen()) {
+            if (this.isClear()) {
 
                 if (confirm("You Win!\nDo you play once more? "))
                     this.reset()
             }
         },
-        fieldRightClickAction: function (row, col) {
+        rightClickAction: function (row, col) {
 
+            // Gameover時の操作を無効にする
             if (this.isGameover) {
                 return
             }
@@ -49,44 +52,34 @@ var app = new Vue({
                 this.field[row][col].flag = !this.field[row][col].flag
         },
         openCell: function (row, col) {
-            queue = []
+            var queue = []
             queue.push([row, col])
 
-            // ８近傍の相対距離
-            neighbor = [[1, 1], [1, 0], [1, -1], [0, 1], [0, -1], [-1, 1], [-1, 0], [-1, -1]]
 
+            // 幅優先探索でセルを開く
             while (queue.length) {
-                state = queue.shift()
+                var row, col
+                [row, col] = queue.shift()
 
-                row = state[0]
-                col = state[1]
-
-                if (this.field[row][col].open) {
-                    continue
-                }
-                else {
-                    // flagを決してcellをオープン
-                    this.field[row][col].flag = false
-                    this.field[row][col].open = true
-                }
+                this.field[row][col].flag = false
+                this.field[row][col].open = true
 
                 // Fieldの数値が0でなければ終了
-                if (this.field[row][col].state != 0) {
-                    continue
-                }
-                // Fieldの数値が0であれば、幅優先でcellを開けていく
+                if (this.field[row][col].state == 0) {
 
-                for (diff of neighbor) {
-                    nextRow = row + diff[0]
-                    nextCol = col + diff[1]
+                    for (diff of neighbor) {
+                        var nextRow = row + diff[0]
+                        var nextCol = col + diff[1]
 
-                    if (nextRow < 0 || nextCol < 0 || nextRow > this.N - 1 || nextCol > this.N - 1)
-                        continue
+                        if (nextRow < 0 || nextCol < 0 || nextRow > this.N - 1 || nextCol > this.N - 1) {
+                            continue
+                        }
 
-                    if (this.field[nextRow][nextCol].open == 0)
-                        queue.push([nextRow, nextCol])
+                        if (this.field[nextRow][nextCol].open == 0) {
+                            queue.push([nextRow, nextCol])
+                        }
 
-
+                    }
                 }
 
             }
@@ -101,8 +94,10 @@ var app = new Vue({
             for (i = 0; i < this.N; i++) {
                 var line = [false]
                 for (j = 0; j < this.N; j++) {
-                    if (Math.random() < this.LEVEL)
+                    if (Math.random() < this.LEVEL) {
                         line.push(true)
+                        this.bomCount++;
+                    }
                     else
                         line.push(false)
                 }
@@ -146,7 +141,7 @@ var app = new Vue({
                 this.statusField[i] = new Array(this.N).fill(0);
             }
         },
-        allOpen: function () {
+        isClear: function () {
             for (row of this.field) {
                 for (cell of row) {
                     if (cell.bom === cell.flag) {
@@ -160,6 +155,7 @@ var app = new Vue({
             return true
         },
         reset: function () {
+            this.bomCount = 0
             this.resetField()
             this.createStatusField()
         },
