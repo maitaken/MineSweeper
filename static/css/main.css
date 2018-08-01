@@ -30,6 +30,29 @@ button{
     background-color: #FFF;
 }
 
+#clear-back{
+    position: absolute;
+    background: #000;
+    opacity: 0.5;
+    height: 100%;
+    width:100%;
+}
+
+#clear-dialog{
+    position: absolute;
+    border-radius: 6px;
+    left:20px;
+    top:10px;
+    width:200px;
+    height:50px;
+    background-color:#FFF;
+    opacity: 0.9;
+}
+
+#clear-dialog button{
+    margin:0px 70px;
+}
+
 .flag{
     background-color: #FFF;
     background-image: url("./../image/flag.png");

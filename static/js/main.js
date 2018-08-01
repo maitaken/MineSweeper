@@ -14,14 +14,17 @@ var app = new Vue({
         field: [],
         isGameover: false,
         N: 8,
-        LEVEL: 0.12,
-        bomCount: 0
+        LEVEL: 0.0,
+        fieldStatus: {
+            "bomCount": 0,
+            "openCount": 0
+        }
     },
     methods: {
         leftClickAction: function (row, col) {
 
             // GameOverの場合とフラグが立っている場合は
-            //左クリックを無効にする
+            // 左クリックを無効にする
             if (this.isGameover || this.field[row][col].flag) {
                 return
             }
@@ -35,11 +38,11 @@ var app = new Vue({
             // 爆弾だったらアラート
             this.openCell(row, col)
 
-            if (this.isClear()) {
+            // if (this.isClear()) {
 
-                if (confirm("You Win!\nDo you play once more? "))
-                    this.reset()
-            }
+            //     if (confirm("You Win!\nDo you play once more? "))
+            //         this.setField()
+            // }
         },
         rightClickAction: function (row, col) {
 
@@ -55,7 +58,6 @@ var app = new Vue({
             var queue = []
             queue.push([row, col])
 
-
             // 幅優先探索でセルを開く
             while (queue.length) {
                 var row, col
@@ -63,6 +65,8 @@ var app = new Vue({
 
                 this.field[row][col].flag = false
                 this.field[row][col].open = true
+
+                this.fieldStatus.openCount++;
 
                 // Fieldの数値が0でなければ終了
                 if (this.field[row][col].state == 0) {
@@ -84,83 +88,54 @@ var app = new Vue({
 
             }
         },
-        resetField: function () {
+        setField: function () {
             this.field = []
             this.isGameover = false
 
-            var falseLine = new Array(this.N + 2).fill(false)
+            for (let i = 0; i < this.N; i++) {
+                var row = []
+                for (let j = 0; j < this.N; j++) {
 
-            var tempField = [falseLine]
-            for (i = 0; i < this.N; i++) {
-                var line = [false]
-                for (j = 0; j < this.N; j++) {
+                    //todo
+                    var isBom
+
                     if (Math.random() < this.LEVEL) {
-                        line.push(true)
-                        this.bomCount++;
+                        isBom = true
+                        this.fieldStatus.bomCount++;
                     }
-                    else
-                        line.push(false)
-                }
-                line.push(false)
-                tempField.push(line)
-            }
-
-            tempField.push(falseLine)
-
-            // tempFieldから数値を算出
-
-            for (i = 1; i < this.N + 1; i++) {
-                line = []
-                for (j = 1; j < this.N + 1; j++) {
-                    if (tempField[i][j])
-                        state = "B"
                     else {
-                        state = tempField[i + 1][j + 1] +
-                            tempField[i + 1][j] +
-                            tempField[i + 1][j - 1] +
-                            tempField[i][j + 1] +
-                            tempField[i][j - 1] +
-                            tempField[i - 1][j + 1] +
-                            tempField[i - 1][j] +
-                            tempField[i - 1][j - 1]
+                        isBom = false
                     }
-                    line.push({
-                        "state": state,
+
+                    row.push({
+                        "bom": isBom,
                         "flag": false,
                         "open": false,
-                        "bom": tempField[i][j]
+                        "state": 0
                     })
                 }
-                this.field.push(line)
+                this.field.push(row)
+            }
+
+            for (let i = 0; i < this.N; i++) {
+                for (let j = 0; j < this.N; j++) {
+
+                    if (!this.field[i][j].bom)
+                        continue
+
+                    for (diff of neighbor) {
+                        var nextRow = i + diff[0]
+                        var nextCol = j + diff[1]
+
+                        if ((nextRow >= 0 && nextRow < this.N) && (nextCol >= 0 && nextCol < this.N))
+                            this.field[nextRow][nextCol].state++
+
+                    }
+                }
             }
 
         },
-        createStatusField: function () {
-            this.statusField = new Array(this.N)
-            for (i = 0; i < this.N; i++) {
-                this.statusField[i] = new Array(this.N).fill(0);
-            }
-        },
-        isClear: function () {
-            for (row of this.field) {
-                for (cell of row) {
-                    if (cell.bom === cell.flag) {
-                        continue
-                    }
-                    else {
-                        return false
-                    }
-                }
-            }
-            return true
-        },
-        reset: function () {
-            this.bomCount = 0
-            this.resetField()
-            this.createStatusField()
-        },
         gameover: function () {
-            alert("Bom")
             this.isGameover = true
             for (row of this.field) {
                 for (cell of row) {
@@ -171,7 +146,22 @@ var app = new Vue({
             }
         }
     },
+    computed: {
+        isClear: function () {
+            for (row of this.field) {
+                for (cell of row) {
+                    if (cell.bom) {
+                        continue
+                    }
+                    if (!cell.open) {
+                        return false
+                    }
+                }
+            }
+            return true
+        }
+    },
     created: function () {
-        this.reset()
+        this.setField()
     }
 })

@@ -11,12 +11,26 @@
 
 <body>
     <div id="app">
-        <div class="line" v-for="(line,row) in field">
-            <div class="cells" v-for=" (cell,col) in line ">
-                <div class="cell " @click.left="leftClickAction(row,col)" @click.right.prevent="rightClickAction(row,col)" :class="{opened:cell.open,flag:cell.flag,bom:cell.open&&cell.bom}">
+        <div v-show="isClear">
+            <div id='clear-back'></div>
+            <div id='clear-dialog'>
+                <div>
+                    クリア! もう一回やる？
+                </div>
 
-                    <div v-show="cell.open">
-                        {{cell.bom || cell.state==0 ?"":cell.state}}
+                <button @click="setField ">
+                    もう一回
+                </button>
+            </div>
+        </div>
+
+        <div class="line " v-for="(line,row) in field ">
+            <div class="cells " v-for=" (cell,col) in line ">
+                <div class="cell " @click.left="leftClickAction(row,col) " @click.right.prevent="rightClickAction(row,col)
+            " :class="{opened:cell.open,flag:cell.flag,bom:cell.open&&cell.bom} ">
+
+                    <div v-show="cell.open ">
+                        {{cell.bom || cell.state==0 ?" ":cell.state}}
                     </div>
 
                 </div>
