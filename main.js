@@ -102,7 +102,8 @@ app.on('ready', () => {
   const menu = Menu.buildFromTemplate(template)
   Menu.setApplicationMenu(menu)
 
-  setLevel("easy")
+  // setLevel("easy")
+
 
   app.on('window-all-closed', () => {
     app.quit()

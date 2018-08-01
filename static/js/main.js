@@ -1,10 +1,11 @@
-// // レンダラプロセス（送信側）
-// const { ipcRenderer } = require('electron') // ipc通信を読み込む
+// レンダラプロセス（送信側）
+const { ipcRenderer } = require('electron');
 
-// ipcRenderer.on('change-level', function (event, args) {
-//     app.N = args
-//     app.reset()
-// })
+ipcRenderer.on('change-level', function (event, args) {
+    console.log(args)
+    app.N = args
+    app.setField()
+})
 
 const neighbor = [[1, 1], [1, 0], [1, -1], [0, 1], [0, -1], [-1, 1], [-1, 0], [-1, -1]]
 
@@ -13,8 +14,8 @@ var app = new Vue({
     data: {
         field: [],
         isGameover: false,
-        N: 8,
-        LEVEL: 0.0,
+        N: 18,
+        LEVEL: 0.1,
         fieldStatus: {
             "bomCount": 0,
             "openCount": 0
@@ -62,6 +63,8 @@ var app = new Vue({
             while (queue.length) {
                 var row, col
                 [row, col] = queue.shift()
+
+                console.log(queue)
 
                 this.field[row][col].flag = false
                 this.field[row][col].open = true
