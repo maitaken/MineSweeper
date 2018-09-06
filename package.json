@@ -7,8 +7,10 @@
     "express": "^4.16.3"
   },
   "devDependencies": {
+    "electron-connect": "^0.6.3",
     "electron-packager": "^12.1.0",
-    "electron-prebuilt": "^1.4.13"
+    "electron-prebuilt": "^1.4.13",
+    "gulp": "^3.9.1"
   },
   "scripts": {
     "start": "electron main.js",

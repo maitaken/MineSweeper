@@ -13,7 +13,7 @@ var app = new Vue({
     data: {
         field: [],
         isGameover: false,
-        N: 8,
+        N: 2,
         LEVEL: 0.1,
         fieldStatus: {
             "bomCount": 0,
