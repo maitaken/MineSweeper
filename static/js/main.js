@@ -1,10 +1,12 @@
-// レンダラプロセス（送信側）
-const { ipcRenderer } = require('electron') // ipc通信を読み込む
+// レンダラープロセスでやりとりするipcRenderer
+const { ipcRenderer } = require('electron');
+// asynchronous-messageチャンネルの受信処理
+ipcRenderer.on('change-level', (msg) => {
+    // アラートダイアログに"ping"が表示される  
+    alert(msg);
+});
 
-ipcRenderer.on('change-level', function (event, args) {
-    app.N = args
-    app.reset()
-})
+const neighbor = [[1, 1], [1, 0], [1, -1], [0, 1], [0, -1], [-1, 1], [-1, 0], [-1, -1]]
 
 var app = new Vue({
     el: '#app',
@@ -12,35 +14,39 @@ var app = new Vue({
         field: [],
         isGameover: false,
         N: 8,
-        LEVEL: 0.12
+        LEVEL: 0.1,
+        fieldStatus: {
+            "bomCount": 0,
+            "openCount": 0
+        }
     },
     methods: {
-        fieldLeftClickAction: function (row, col) {
+        leftClickAction: function (row, col) {
 
-            if (this.isGameover) {
+            // GameOverの場合とフラグが立っている場合は
+            // 左クリックを無効にする
+            if (this.isGameover || this.field[row][col].flag) {
                 return
             }
 
-            // flagが立っていなかったらオープン
-            if (!this.field[row][col].flag) {
-                // 爆弾だったらアラート
-                this.openCell(row, col)
-                if (this.field[row][col].bom) {
-                    this.gameover()
-                    return
-                }
+            //
+            if (this.field[row][col].bom) {
+                this.gameover()
+                return
             }
 
-            console.log(this.allOpen())
+            // 爆弾だったらアラート
+            this.openCell(row, col)
 
-            if (this.allOpen()) {
+            // if (this.isClear()) {
 
-                if (confirm("You Win!\nDo you play once more? "))
-                    this.reset()
-            }
+            //     if (confirm("You Win!\nDo you play once more? "))
+            //         this.setField()
+            // }
         },
-        fieldRightClickAction: function (row, col) {
+        rightClickAction: function (row, col) {
 
+            // Gameover時の操作を無効にする
             if (this.isGameover) {
                 return
             }
@@ -49,122 +55,89 @@ var app = new Vue({
                 this.field[row][col].flag = !this.field[row][col].flag
         },
         openCell: function (row, col) {
-            queue = []
+            var queue = []
             queue.push([row, col])
 
-            // ８近傍の相対距離
-            neighbor = [[1, 1], [1, 0], [1, -1], [0, 1], [0, -1], [-1, 1], [-1, 0], [-1, -1]]
-
+            // 幅優先探索でセルを開く
             while (queue.length) {
-                state = queue.shift()
+                var row, col
+                [row, col] = queue.shift()
 
-                row = state[0]
-                col = state[1]
+                console.log(queue)
 
-                if (this.field[row][col].open) {
-                    continue
-                }
-                else {
-                    // flagを決してcellをオープン
-                    this.field[row][col].flag = false
-                    this.field[row][col].open = true
-                }
+                this.field[row][col].flag = false
+                this.field[row][col].open = true
+
+                this.fieldStatus.openCount++;
 
                 // Fieldの数値が0でなければ終了
-                if (this.field[row][col].state != 0) {
-                    continue
-                }
-                // Fieldの数値が0であれば、幅優先でcellを開けていく
+                if (this.field[row][col].state == 0) {
 
-                for (diff of neighbor) {
-                    nextRow = row + diff[0]
-                    nextCol = col + diff[1]
+                    for (diff of neighbor) {
+                        var nextRow = row + diff[0]
+                        var nextCol = col + diff[1]
 
-                    if (nextRow < 0 || nextCol < 0 || nextRow > this.N - 1 || nextCol > this.N - 1)
-                        continue
+                        if (nextRow < 0 || nextCol < 0 || nextRow > this.N - 1 || nextCol > this.N - 1) {
+                            continue
+                        }
 
-                    if (this.field[nextRow][nextCol].open == 0)
-                        queue.push([nextRow, nextCol])
+                        if (this.field[nextRow][nextCol].open == 0) {
+                            queue.push([nextRow, nextCol])
+                        }
 
-
+                    }
                 }
 
             }
         },
-        resetField: function () {
+        setField: function () {
             this.field = []
             this.isGameover = false
 
-            var falseLine = new Array(this.N + 2).fill(false)
+            for (let i = 0; i < this.N; i++) {
+                var row = []
+                for (let j = 0; j < this.N; j++) {
 
-            var tempField = [falseLine]
-            for (i = 0; i < this.N; i++) {
-                var line = [false]
-                for (j = 0; j < this.N; j++) {
-                    if (Math.random() < this.LEVEL)
-                        line.push(true)
-                    else
-                        line.push(false)
-                }
-                line.push(false)
-                tempField.push(line)
-            }
+                    //todo
+                    var isBom
 
-            tempField.push(falseLine)
-
-            // tempFieldから数値を算出
-
-            for (i = 1; i < this.N + 1; i++) {
-                line = []
-                for (j = 1; j < this.N + 1; j++) {
-                    if (tempField[i][j])
-                        state = "B"
-                    else {
-                        state = tempField[i + 1][j + 1] +
-                            tempField[i + 1][j] +
-                            tempField[i + 1][j - 1] +
-                            tempField[i][j + 1] +
-                            tempField[i][j - 1] +
-                            tempField[i - 1][j + 1] +
-                            tempField[i - 1][j] +
-                            tempField[i - 1][j - 1]
+                    if (Math.random() < this.LEVEL) {
+                        isBom = true
+                        this.fieldStatus.bomCount++;
                     }
-                    line.push({
-                        "state": state,
+                    else {
+                        isBom = false
+                    }
+
+                    row.push({
+                        "bom": isBom,
                         "flag": false,
                         "open": false,
-                        "bom": tempField[i][j]
+                        "state": 0
                     })
                 }
-                this.field.push(line)
+                this.field.push(row)
+            }
+
+            for (let i = 0; i < this.N; i++) {
+                for (let j = 0; j < this.N; j++) {
+
+                    if (!this.field[i][j].bom)
+                        continue
+
+                    for (diff of neighbor) {
+                        var nextRow = i + diff[0]
+                        var nextCol = j + diff[1]
+
+                        if ((nextRow >= 0 && nextRow < this.N) && (nextCol >= 0 && nextCol < this.N))
+                            this.field[nextRow][nextCol].state++
+
+                    }
+                }
             }
 
         },
-        createStatusField: function () {
-            this.statusField = new Array(this.N)
-            for (i = 0; i < this.N; i++) {
-                this.statusField[i] = new Array(this.N).fill(0);
-            }
-        },
-        allOpen: function () {
-            for (row of this.field) {
-                for (cell of row) {
-                    if (cell.bom === cell.flag) {
-                        continue
-                    }
-                    else {
-                        return false
-                    }
-                }
-            }
-            return true
-        },
-        reset: function () {
-            this.resetField()
-            this.createStatusField()
-        },
         gameover: function () {
-            alert("Bom")
             this.isGameover = true
             for (row of this.field) {
                 for (cell of row) {
@@ -175,7 +148,22 @@ var app = new Vue({
             }
         }
     },
+    computed: {
+        isClear: function () {
+            for (row of this.field) {
+                for (cell of row) {
+                    if (cell.bom) {
+                        continue
+                    }
+                    if (!cell.open) {
+                        return false
+                    }
+                }
+            }
+            return true
+        }
+    },
     created: function () {
-        this.reset()
+        this.setField()
     }
 })
