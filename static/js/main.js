@@ -8,7 +8,6 @@ ipcRenderer.on('set-level', function (event, level) {
             break
         case 'normal':
             app.N = 15;
-            alert(app.N)
             break
         case 'hard':
             app.N = 20;
@@ -27,8 +26,8 @@ let app = new Vue({
         N: 10,
         LEVEL: 0.1,
         fieldStatus: {
-            "bomCount": 0,
-            "openCount": 0
+            bomCount: 0,
+            openCount: 0
         }
     },
     methods: {
@@ -40,20 +39,14 @@ let app = new Vue({
                 return
             }
 
-            //
+            // 爆弾だったらゲームオーバー
             if (this.field[row][col].bom) {
                 this.gameover()
                 return
             }
 
-            // 爆弾だったらアラート
+            // セルのオープン
             this.openCell(row, col)
-
-            // if (this.isClear()) {
-
-            //     if (confirm("You Win!\nDo you play once more? "))
-            //         this.setField()
-            // }
         },
         rightClickAction: function (row, col) {
 
@@ -66,7 +59,7 @@ let app = new Vue({
                 this.field[row][col].flag = !this.field[row][col].flag
         },
         openCell: function (row, col) {
-            var queue = []
+            let queue = []
             queue.push([row, col])
 
             // 幅優先探索でセルを開く
@@ -74,12 +67,15 @@ let app = new Vue({
                 var row, col
                 [row, col] = queue.shift()
 
-                console.log(queue)
+                if (this.field[row][col].open) {
+                    continue;
+                }
 
                 this.field[row][col].flag = false
                 this.field[row][col].open = true
 
                 this.fieldStatus.openCount++;
+
 
                 // Fieldの数値が0でなければ終了
                 if (this.field[row][col].state == 0) {
@@ -102,9 +98,12 @@ let app = new Vue({
             }
         },
         setField: function () {
-            console.log(this.N)
             this.field = []
             this.isGameover = false
+            this.fieldStatus = {
+                bomCount: 0,
+                openCount: 0
+            }
 
             for (let i = 0; i < this.N; i++) {
                 var row = []
@@ -162,17 +161,7 @@ let app = new Vue({
     },
     computed: {
         isClear: function () {
-            for (row of this.field) {
-                for (cell of row) {
-                    if (cell.bom) {
-                        continue
-                    }
-                    if (!cell.open) {
-                        return false
-                    }
-                }
-            }
-            return true
+            return this.fieldStatus.openCount + this.fieldStatus.bomCount == this.N * this.N
         }
     },
     created: function () {
