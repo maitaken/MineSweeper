@@ -1,19 +1,30 @@
-// レンダラープロセスでやりとりするipcRenderer
 const { ipcRenderer } = require('electron');
-// asynchronous-messageチャンネルの受信処理
-ipcRenderer.on('change-level', (msg) => {
-    // アラートダイアログに"ping"が表示される  
-    alert(msg);
+
+ipcRenderer.on('set-level', function (event, level) {
+    console.log(level)
+    switch (level) {
+        case 'easy':
+            app.N = 10;
+            break
+        case 'normal':
+            app.N = 15;
+            alert(app.N)
+            break
+        case 'hard':
+            app.N = 20;
+            break
+    }
+    app.setField();
 });
 
 const neighbor = [[1, 1], [1, 0], [1, -1], [0, 1], [0, -1], [-1, 1], [-1, 0], [-1, -1]]
 
-var app = new Vue({
+let app = new Vue({
     el: '#app',
     data: {
         field: [],
         isGameover: false,
-        N: 2,
+        N: 10,
         LEVEL: 0.1,
         fieldStatus: {
             "bomCount": 0,
@@ -91,6 +102,7 @@ var app = new Vue({
             }
         },
         setField: function () {
+            console.log(this.N)
             this.field = []
             this.isGameover = false
 
