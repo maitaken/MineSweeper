@@ -1,23 +1,33 @@
-// レンダラープロセスでやりとりするipcRenderer
 const { ipcRenderer } = require('electron');
-// asynchronous-messageチャンネルの受信処理
-ipcRenderer.on('change-level', (msg) => {
-    // アラートダイアログに"ping"が表示される  
-    alert(msg);
+
+ipcRenderer.on('set-level', function (event, level) {
+    console.log(level)
+    switch (level) {
+        case 'easy':
+            app.N = 10;
+            break
+        case 'normal':
+            app.N = 15;
+            break
+        case 'hard':
+            app.N = 20;
+            break
+    }
+    app.setField();
 });
 
 const neighbor = [[1, 1], [1, 0], [1, -1], [0, 1], [0, -1], [-1, 1], [-1, 0], [-1, -1]]
 
-var app = new Vue({
+let app = new Vue({
     el: '#app',
     data: {
         field: [],
         isGameover: false,
-        N: 8,
+        N: 10,
         LEVEL: 0.1,
         fieldStatus: {
-            "bomCount": 0,
-            "openCount": 0
+            bomCount: 0,
+            openCount: 0
         }
     },
     methods: {
@@ -29,20 +39,14 @@ var app = new Vue({
                 return
             }
 
-            //
+            // 爆弾だったらゲームオーバー
             if (this.field[row][col].bom) {
                 this.gameover()
                 return
             }
 
-            // 爆弾だったらアラート
+            // セルのオープン
             this.openCell(row, col)
-
-            // if (this.isClear()) {
-
-            //     if (confirm("You Win!\nDo you play once more? "))
-            //         this.setField()
-            // }
         },
         rightClickAction: function (row, col) {
 
@@ -55,7 +59,7 @@ var app = new Vue({
                 this.field[row][col].flag = !this.field[row][col].flag
         },
         openCell: function (row, col) {
-            var queue = []
+            let queue = []
             queue.push([row, col])
 
             // 幅優先探索でセルを開く
@@ -63,12 +67,15 @@ var app = new Vue({
                 var row, col
                 [row, col] = queue.shift()
 
-                console.log(queue)
+                if (this.field[row][col].open) {
+                    continue;
+                }
 
                 this.field[row][col].flag = false
                 this.field[row][col].open = true
 
                 this.fieldStatus.openCount++;
+
 
                 // Fieldの数値が0でなければ終了
                 if (this.field[row][col].state == 0) {
@@ -93,6 +100,10 @@ var app = new Vue({
         setField: function () {
             this.field = []
             this.isGameover = false
+            this.fieldStatus = {
+                bomCount: 0,
+                openCount: 0
+            }
 
             for (let i = 0; i < this.N; i++) {
                 var row = []
@@ -150,17 +161,7 @@ var app = new Vue({
     },
     computed: {
         isClear: function () {
-            for (row of this.field) {
-                for (cell of row) {
-                    if (cell.bom) {
-                        continue
-                    }
-                    if (!cell.open) {
-                        return false
-                    }
-                }
-            }
-            return true
+            return this.fieldStatus.openCount + this.fieldStatus.bomCount == this.N * this.N
         }
     },
     created: function () {
