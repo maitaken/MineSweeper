@@ -1,66 +1,42 @@
+.line{
+    display: flex;
+    justify-content: center;
+    user-select: none;
+}
 
+.cell{
+    position: relative;
+    height: 40px;
+    width: 40px;
+    background-color: #aaa;
 
-.cell {
-    background-color: rgb(180, 180, 180);
-    float: left;
-    height: 20px;
-    width: 20px;
-    border:2px solid;
-    border-color:rgb(210, 210, 210) rgb(80, 80, 80) rgb(80, 80, 80) rgb(210, 210, 210);
+}
+
+.cell > div{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform : translateY(-50%) translateX(-50%);    
 }
 
 .cell:hover{
-    background-color: rgb(200, 200, 200);
+    background-color: #bbb;
 }
 
 .cell:active{
-    background-color: rgb(82, 73, 73);
+    background-color:#555;
 }
 
-.line {
-    height: 20px;
-    float: left;
-}
-
-button{
-    float: left;
-}
-
-.opened {
-    background-color: #FFF;
-}
-
-#clear-back{
-    position: absolute;
-    background: #000;
-    opacity: 0.5;
-    height: 100%;
-    width:100%;
-}
-
-#clear-dialog{
-    position: absolute;
-    border-radius: 6px;
-    left:20px;
-    top:10px;
-    width:200px;
-    height:50px;
-    background-color:#FFF;
-    opacity: 0.9;
-}
-
-#clear-dialog button{
-    margin:0px 70px;
-}
-
-.flag{
-    background-color: #FFF;
-    background-image: url("./../image/flag.png");
-    background-size: contain;
+.open{
+    background-color: #eee;
 }
 
 .bom{
-    background-color: #FFF;
-    background-image: url("./../image/bom.png");
-    background-size: contain;
+    background-image: url("../image/bom.png");
+    background-size:cover;
+}
+
+.flag{
+    background-image:url("../image/flag.png");
+    background-size: cover;
 }

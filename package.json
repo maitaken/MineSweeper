@@ -4,7 +4,8 @@
   "description": "サーバの追加",
   "main": "main.js",
   "dependencies": {
-    "express": "^4.16.3"
+    "express": "^4.16.3",
+    "gulp-sass": "^4.0.1"
   },
   "devDependencies": {
     "electron-connect": "^0.6.3",
