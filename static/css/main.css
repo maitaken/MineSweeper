@@ -42,3 +42,83 @@
     background-image:url("../image/flag.png");
     background-size: cover;
 }
+
+.modal-overlay{
+    position: fixed;
+    display: inline-block;
+    top:0px;
+    left:0px;
+    height:100%;
+    width:100%;
+    background-color: #000;
+    z-index:1;
+}
+
+.modal-box{
+    position: absolute;
+    width:80%;
+    height: 200px;
+
+    left:50%;
+    top:50%;
+    transform: translate(-50%,-50%);
+
+    padding: 10px;
+    background-color: #fff;
+}
+
+.modal-title{
+    font-size:24px;
+    width: 100%;
+    border-bottom: #aaa 1px solid;
+}
+
+.modal-content{
+    margin-top:30px;
+    margin-left:20px;
+    font-size:18px;
+}
+
+.modal-content > div{
+    margin:10px;
+}
+
+button{
+    height: 40px;
+    width: 100px;
+    outline: none;
+    color:#fff;
+    font-size:18px;
+    border-radius: 3px;
+    filter:drop-shadow(1px 2px 1px rgba(0,0,0,.8));
+    background: rgb(0, 132, 255);
+    border:none;
+}
+
+button:hover{
+    background: rgb(0, 102, 255);
+}
+
+button:active{
+    transform: translateY(4px);
+    filter:drop-shadow(0 0 0 rgba(0,0,0,.8));
+}
+
+
+.active{
+    animation: fade-in 0.5s ease-in 0s 1 normal forwards;
+}
+
+@keyframes fade-in{
+    0%{
+        background-color: rgba(0,0,0,0);
+    }
+    1%{
+        background-color: rgba(0,0,0,0.1);
+
+    }
+    100%{
+        background-color: rgba(0,0,0,0.7);
+
+    }
+}
