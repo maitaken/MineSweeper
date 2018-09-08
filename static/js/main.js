@@ -1,7 +1,6 @@
 const { ipcRenderer } = require('electron');
 
 ipcRenderer.on('set-level', function (event, level) {
-    console.log(level)
     switch (level) {
         case 'easy':
             app.N = 10;

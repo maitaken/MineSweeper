@@ -7,12 +7,10 @@ gulp.task('serve', function () {
     electron.start();
 
     gulp.watch(['./main.js'], () => {
-        console.log("Main")
         electron.restart();
     });
 
-    gulp.watch(['./static/**/*.js', './static/**/*.css'], () => {
-        console.log("Renderer")
+    gulp.watch(["./static/**/**"], () => {
         electron.reload();
     });
 });
