@@ -103,6 +103,10 @@ app.on('ready', () => {
   mainWin.on("show",()=>{
     setLevel("easy")
   })
+  mainWin.on('closed', () => {
+    win = null
+    app.quit()
+  })
   mainWin.once('ready-to-show', () => {
     mainWin.show()
   })
