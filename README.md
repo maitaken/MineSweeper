@@ -12,4 +12,5 @@ electron .
 ```
 
 # Download
-準備中
+下のリンクからダウンロードできます。  
+<https://github.com/maitaken/MineSweeper/releases>
