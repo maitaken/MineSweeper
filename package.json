@@ -15,7 +15,8 @@
   },
   "scripts": {
     "start": "electron main.js",
-    "package": "electron-packager . Minesweeper --platform=linux,darwin,win32 --arch=x64 --icon=icon/icon.icns --overwrite",
+    "package": "electron-packager . Minesweeper --platform=linux,darwin --arch=x64 --icon=icon/icon.icns --overwrite",
+    "win":"electron-packager . Minesweeper --platform=win32 --arch=x64 --overwrite",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "gulp"
   },
