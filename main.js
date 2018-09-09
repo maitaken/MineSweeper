@@ -2,8 +2,25 @@ const { app, BrowserWindow, Menu } = require('electron')
 
 let mainWin = null;
 
+const setContentSize = function(level){
+  let heihgt,width;
+  switch(level){
+    case "easy":
+      [width,heihgt] = [400,350];
+    break
+    case "normal":
+      [width,heihgt] = [600,500];
+    break
+    case "hard":
+    [width,heihgt] = [800,650];
+    break
+  }
+  mainWin.setContentSize(width,heihgt);
+}
+
 const setLevel = function (level) {
-  if (mainWin != null) {
+  if (mainWin != null) {  
+    setContentSize(level);
     mainWin.webContents.send('set-level', level);
   }
 }
@@ -71,17 +88,25 @@ if (process.platform === 'darwin') {
 let menu = Menu.buildFromTemplate(template)
 
 let options = {
+  useContentSize: true,
+  show:false,
+  devTools:false,
+  resizable:false
 }
 
 app.on('ready', () => {
 
-  mainWin = new BrowserWindow({
-    options
+  mainWin = new BrowserWindow(options)
+
+  mainWin.loadURL(`file://${__dirname}/static/index.html`)
+
+  mainWin.on("show",()=>{
+    setLevel("easy")
+  })
+  mainWin.once('ready-to-show', () => {
+    mainWin.show()
   })
 
   Menu.setApplicationMenu(menu)
 
-  mainWin.webContents.openDevTools()
-
-  mainWin.loadURL(`file://${__dirname}/static/index.html`)
 });
